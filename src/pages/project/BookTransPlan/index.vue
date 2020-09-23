@@ -10,6 +10,7 @@
           </q-card-section>
         </q-card>
         <q-card
+          v-else
           v-for="book in books.all"
           :key="book.id"
           class="topItemBox"
@@ -85,15 +86,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="read">
-          <q-card
-            v-if="
-              books.all.length !== 0 &&
-                readBook.cache.recordOpen === false &&
-                books.all.filter(item => item.id === books.nowSelectedBookId)
-                  .done === false
-            "
-            class="q-ma-md"
-          >
+          <q-card v-if="readBook.cache.addButton" class="q-ma-md">
             <q-card-section>
               <q-btn
                 flat
@@ -105,7 +98,18 @@
           </q-card>
           <q-card v-if="readBook.records.length === 0" class="q-ma-md">
             <q-card-section>
-              There's no record now, add one!
+              <p>There's no record now, add one!</p>
+              <!-- <p>books.all.length: {{ books.all.length !== 0 }}</p>
+              <p>
+                books.all.filter(item => item.id ===
+                {{ books.nowSelectedBookId }}) .done:
+                {{
+                  books.all.filter(
+                    item => item.id === books.nowSelectedBookId
+                  )[0].done === false
+                }}
+              </p>
+              <p>readBook.cache.recordOpen: {{ !readBook.cache.recordOpen }}</p> -->
             </q-card-section>
           </q-card>
           <q-card v-if="readBook.cache.recordOpen === true" class="q-ma-md">
@@ -585,6 +589,7 @@ export default {
       },
       readBook: {
         cache: {
+          addButton: false,
           recordOpen: false
         },
         records: [],
@@ -727,6 +732,37 @@ export default {
           console.log(`--->Record: err: `, err);
           this.readBook.records = [];
         });
+
+        this.updateAddRecordButtonStatus()
+    },
+
+    updateAddRecordButtonStatus() {
+      let res = true;
+
+      // console.log("===>1:", this.books.all.length === 0);
+      // console.log(
+      //   "===>2:",
+      //   this.books.all.filter(
+      //     item => item.id === this.books.nowSelectedBookId
+      //   )[0].done
+      // );
+      // console.log("===>3:", this.readBook.cache.recordOpen);
+
+      if (this.books.all.length === 0) {
+        res = false;
+      }
+      else if (
+        this.books.all.filter(
+          item => item.id === this.books.nowSelectedBookId
+        )[0].done === true
+      ) {
+        res = false;
+      }
+      else if (this.readBook.cache.recordOpen === true) {
+        res = false;
+      }
+
+      this.readBook.cache.addButton = res
     },
     addBookRecordSubmit() {
       console.log("--->New Record: date:", this.readBook.record.data);
