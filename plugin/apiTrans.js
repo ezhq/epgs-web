@@ -35,7 +35,7 @@ const apiTrans = axios.create({
   // baseURL: process.env.BASIC_URL_EPS,
   // baseURL: 'http://localhost:8095',
   // baseURL: 'http://0.0.0.0:8095',
-  baseURL: 'https://epgs-server.herokuapp.com',
+  baseURL: 'https://epgs-server.vercel.app',
   timeout: 5000 // 请求超时时间
 })
 
